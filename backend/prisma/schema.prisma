@@ -15,6 +15,7 @@ model User {
   joins        Join[]
   spins        Spin[]
   transactions Transaction[]
+  wheelsHosted Wheel[]
 }
 
 model Wheel {
@@ -30,6 +31,12 @@ model Wheel {
   endsAt       DateTime?
   hostId       Int
   host         User      @relation(fields: [hostId], references: [id])
+  createdAt    DateTime  @default(now())
+  startsAt     DateTime?
+  endsAt       DateTime?
+  hostId       Int
+  host         User      @relation(fields: [hostId], references: [id], name: "WheelHost")
+
 }
 
 model Join {
