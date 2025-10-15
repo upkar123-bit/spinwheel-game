@@ -1,7 +1,6 @@
 import dotenv from "dotenv";
 dotenv.config();  // Load variables from .env
-
-require('dotenv').config();
+import express from 'express';
 const express = require('express');
 const http = require('http');
 const { createClient } = require('redis');
