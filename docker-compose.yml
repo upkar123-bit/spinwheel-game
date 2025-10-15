@@ -1,0 +1,46 @@
+services:
+  db:
+    image: postgres:15
+    container_name: spinwheel-db
+    restart: always
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+      POSTGRES_DB: spinwheel
+    ports:
+      - "5432:5432"
+    volumes:
+      - db-data:/var/lib/postgresql/data
+
+  backend:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+    container_name: spinwheel-backend
+    restart: always
+    ports:
+      - "4000:4000"
+    environment:
+      DATABASE_URL: postgres://postgres:postgres@db:5432/spinwheel
+      ADMIN_ID: 1
+      ENTRY_FEE_PERCENT_WINNER: 70
+      ENTRY_FEE_PERCENT_ADMIN: 20
+      ENTRY_FEE_PERCENT_APP: 10
+    depends_on:
+      - db
+
+  frontend:
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile
+    container_name: spinwheel-frontend
+    restart: always
+    ports:
+      - "3000:5173"
+    environment:
+      VITE_API: http://backend:4000
+    depends_on:
+      - backend
+
+volumes:
+  db-data:

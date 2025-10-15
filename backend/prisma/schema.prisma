@@ -1,0 +1,60 @@
+generator client {
+username String @unique
+coins Int @default(1000)
+createdAt DateTime @default(now())
+
+
+joins Join[]
+spins Spin[]
+transactions Transaction[]
+}
+
+
+model Wheel {
+id Int @id @default(autoincrement())
+ownerId Int
+owner User @relation(fields:[ownerId], references:[id])
+entry_fee Int
+winnerPool Int @default(0)
+ownerPool Int @default(0)
+appPool Int @default(0)
+status WheelStatus @default(PENDING)
+startsAt DateTime?
+createdAt DateTime @default(now())
+
+
+joins Join[]
+spins Spin[]
+}
+
+
+model Join {
+id Int @id @default(autoincrement())
+user User @relation(fields:[userId], references:[id])
+userId Int
+wheel Wheel @relation(fields:[wheelId], references:[id])
+wheelId Int
+joinedAt DateTime @default(now())
+eliminatedAt DateTime?
+}
+
+
+model Spin {
+id Int @id @default(autoincrement())
+wheelId Int
+wheel Wheel @relation(fields:[wheelId], references:[id])
+winnerId Int
+amount Int
+createdAt DateTime @default(now())
+}
+
+
+model Transaction {
+id Int @id @default(autoincrement())
+userId Int
+user User @relation(fields:[userId], references:[id])
+amount Int
+kind String
+meta String?
+createdAt DateTime @default(now())
+}
