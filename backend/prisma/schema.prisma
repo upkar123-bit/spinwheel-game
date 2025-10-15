@@ -1,60 +1,57 @@
+// Generator block
 generator client {
-username String @unique
-coins Int @default(1000)
-createdAt DateTime @default(now())
-
-
-joins Join[]
-spins Spin[]
-transactions Transaction[]
+  provider = "prisma-client-js"
 }
 
-
-model Wheel {
-id Int @id @default(autoincrement())
-ownerId Int
-owner User @relation(fields:[ownerId], references:[id])
-entry_fee Int
-winnerPool Int @default(0)
-ownerPool Int @default(0)
-appPool Int @default(0)
-status WheelStatus @default(PENDING)
-startsAt DateTime?
-createdAt DateTime @default(now())
-
-
-joins Join[]
-spins Spin[]
+// Datasource block
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
 }
 
+// Models
+model User {
+  id           Int       @id @default(autoincrement())
+  username     String    @unique
+  coins        Int       @default(1000)
+  createdAt    DateTime  @default(now())
+  joins        Join[]
+  spins        Spin[]
+  transactions Transaction[]
+}
 
 model Join {
-id Int @id @default(autoincrement())
-user User @relation(fields:[userId], references:[id])
-userId Int
-wheel Wheel @relation(fields:[wheelId], references:[id])
-wheelId Int
-joinedAt DateTime @default(now())
-eliminatedAt DateTime?
+  id       Int   @id @default(autoincrement())
+  wheel    Wheel @relation(fields: [wheelId], references: [id])
+  wheelId  Int
+  user     User  @relation(fields: [userId], references: [id])
+  userId   Int
+  eliminatedAt DateTime?
 }
 
+model Wheel {
+  id        Int     @id @default(autoincrement())
+  title     String
+  entry_fee Int
+  status    String  @default("PENDING")
+  joins     Join[]
+  spins     Spin[]
+  transactions Transaction[]
+}
 
 model Spin {
-id Int @id @default(autoincrement())
-wheelId Int
-wheel Wheel @relation(fields:[wheelId], references:[id])
-winnerId Int
-amount Int
-createdAt DateTime @default(now())
+  id      Int   @id @default(autoincrement())
+  wheel   Wheel @relation(fields: [wheelId], references: [id])
+  wheelId Int
+  result  Int
 }
-
 
 model Transaction {
-id Int @id @default(autoincrement())
-userId Int
-user User @relation(fields:[userId], references:[id])
-amount Int
-kind String
-meta String?
-createdAt DateTime @default(now())
+  id      Int    @id @default(autoincrement())
+  user    User   @relation(fields: [userId], references: [id])
+  userId  Int
+  amount  Int
+  kind    String
+  meta    String?
 }
+
